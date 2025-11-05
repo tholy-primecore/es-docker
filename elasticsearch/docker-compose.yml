@@ -10,7 +10,8 @@ services:
       - "${ES7_HTTP_PORT:-9200}:9200"
       - "${ES7_TRANSPORT_PORT:-9300}:9300"
     volumes:
-      - ./es7/hunspell:/usr/share/elasticsearch/config/hunspell:ro
+      - ./shared/hunspell:/usr/share/elasticsearch/config/hunspell:ro
+      - ./shared/lemmagen/cs.lem:/usr/share/elasticsearch/config/lemmagen/cs.lem:ro
 
   es8:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.10.1
@@ -22,6 +23,9 @@ services:
     ports:
       - "${ES8_HTTP_PORT:-9201}:9200"
       - "${ES8_TRANSPORT_PORT:-9301}:9300"
+    volumes:
+      - ./shared/hunspell:/usr/share/elasticsearch/config/hunspell:ro
+      - ./shared/lemmagen/cs.lem:/usr/share/elasticsearch/config/lemmagen/cs.lem:ro
 
   es9:
     image: docker.elastic.co/elasticsearch/elasticsearch:9.0.0
@@ -36,6 +40,7 @@ services:
   kibana:
     image: docker.elastic.co/kibana/kibana:7.12.0
     container_name: kibana
+    platform: linux/amd64
     environment:
       - ELASTICSEARCH_HOSTS=${ES_HOSTS:-http://es7:9200}
     ports:
@@ -46,10 +51,11 @@ services:
   filebeat:
     image: docker.elastic.co/beats/filebeat:7.12.0
     container_name: filebeat
+    platform: linux/amd64
     user: root
     volumes:
       - ${LARAVEL_LOGS_HOST}:/usr/share/filebeat/logs:ro
-      - ./es7/filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+      - ./shared/filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
     depends_on:
       - es7
       
