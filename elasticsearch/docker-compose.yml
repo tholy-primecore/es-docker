@@ -1,0 +1,57 @@
+services:
+  es7:
+    build:
+      context: ./es7
+    container_name: es7
+    environment:
+      - discovery.type=single-node
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    volumes:
+      - ./es7/hunspell:/usr/share/elasticsearch/config/hunspell:ro
+
+  es8:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.10.1
+    container_name: es8
+    environment:
+      - discovery.type=single-node
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+      - ELASTIC_PASSWORD=changeme
+    ports:
+      - "9201:9200"
+      - "9301:9300"
+
+  es9:
+    image: docker.elastic.co/elasticsearch/elasticsearch:9.0.0
+    container_name: es9
+    environment:
+      - discovery.type=single-node
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+      - ELASTIC_PASSWORD=changeme
+    ports:
+      - "9202:9200"
+      - "9302:9300"
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.12.0
+    container_name: kibana
+    environment:
+      - ELASTICSEARCH_HOSTS=http://es7:9200
+    ports:
+      - "5601:5601"
+    depends_on:
+      - es7
+
+  filebeat:
+    image: docker.elastic.co/beats/filebeat:7.12.0
+    container_name: filebeat
+    user: root
+    volumes:
+      - /Users/tomasholy/projects/iris-v2/storage/logs:/usr/share/filebeat/logs:ro
+      - /Users/tomasholy/docker/elasticsearch/es7/filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+    depends_on:
+      - es7
+      
+volumes:
+  es7_data:
