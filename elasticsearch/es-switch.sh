@@ -16,7 +16,9 @@ case $VERSION in
   *) echo "Invalid version: $VERSION. Use 7, 8, or 9."; exit 1 ;;
 esac
 
-cd ~/docker/elasticsearch || exit
+# cd to the directory of this script (path-agnostic)
+SCRIPT_DIR="$(cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P)"
+cd "$SCRIPT_DIR" || exit
 
 case $ACTION in
   start)

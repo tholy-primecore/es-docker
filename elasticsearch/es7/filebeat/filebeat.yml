@@ -17,4 +17,4 @@ processors:
     ignore_failure: true
 
 output.elasticsearch:
-  hosts: ["http://es7:9200"]
+  hosts: ["${ES_HOSTS:http://es7:9200}"]
