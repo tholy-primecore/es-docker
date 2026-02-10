@@ -1,4 +1,26 @@
 services:
+  es5:
+    image: elasticsearch-es5:linux-amd64
+    build:
+      context: ./es5
+    platform: linux/amd64
+    container_name: es5
+    environment:
+      - cluster.name=elasticsearch
+      - discovery.zen.minimum_master_nodes=1
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+      - bootstrap.memory_lock=false
+      - bootstrap.system_call_filter=false
+      - network.host=0.0.0.0
+      - xpack.security.enabled=false
+    ports:
+      - "${ES5_HTTP_PORT:-9203}:9200"
+      - "${ES5_TRANSPORT_PORT:-9303}:9300"
+    volumes:
+      - ./shared/hunspell:/usr/share/elasticsearch/config/hunspell:ro
+      - ./shared/lemmagen/cs.lem:/usr/share/elasticsearch/config/lemmagen/cs.lem:ro
+    restart: on-failure
+
   es7:
     build:
       context: ./es7
