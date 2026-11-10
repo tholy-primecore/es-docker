@@ -46,17 +46,17 @@ cd elasticsearch
 docker compose up -d es7 kibana filebeat
 ```
 
-### Data persistence (ES7)
+### Data persistence (ES7 / ES8)
 
-ES7 stores index data in the named Docker volume `es7_data` (mounted at `/usr/share/elasticsearch/data`).
+ES7 and ES8 store index data in named Docker volumes `es7_data` / `es8_data` (mounted at `/usr/share/elasticsearch/data`).
 
 | Action | Indexes kept? |
 |--------|----------------|
 | `docker compose stop` / `start` | Yes |
-| `docker compose up -d es7` (recreate container) | Yes |
+| `docker compose up -d es7` / `es8` (recreate container) | Yes |
 | `docker compose down` | Yes |
 | `docker compose down -v` | **No** — deletes volumes |
-| `docker volume rm elasticsearch_es7_data` | **No** |
+| `docker volume rm elasticsearch_es7_data` / `elasticsearch_es8_data` | **No** |
 
 If indexes disappear after a restart, the container was likely recreated **without** a data volume (older compose files) or volumes were removed with `-v`.
 
